@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Note from "../Note/Note";
 
+
+
 const Notes = ({ notes }) => {
   return (
     <div>

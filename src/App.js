@@ -19,6 +19,27 @@ const particlesOptions = {
   },
 };
 
+const initialState = {
+  route: "signin",
+  isSignedIn: false,
+  user: {
+    id: "",
+    name: "",
+    email: "",
+    notes: "",
+    joined: "",
+  },
+  notes: [
+    {
+      id: "",
+      title: "",
+      content: "",
+      dateCreated: "",
+      email: "",
+    },
+  ],
+};
+
 class App extends Component {
   onRouteChange = (route) => {
     this.setState({ route: route });
@@ -26,39 +47,77 @@ class App extends Component {
 
   constructor() {
     super();
-    this.state = {
+    this.state = initialState;
+  }
+  //   {
+  //     notes: [
+  //       {
+  //         id: 1,
+  //         name: "Leanne Graham",
+  //         username: "Bret",
+  //         description: "Sincere@april.biz",
+  //       },
+  //       {
+  //         id: 2,
+  //         name: "Ervin Howell",
+  //         username: "Antonette",
+  //         description: "Shanna@melissa.tv",
+  //       },
+  //       {
+  //         id: 3,
+  //         name: "Clementine Bauch",
+  //         username: "Samantha",
+  //         description: "Nathan@yesenia.net",
+  //       },
+  //       {
+  //         id: 4,
+  //         name: "Patricia Lebsack",
+  //         username: "Karianne",
+  //         description: "Julianne.OConner@kory.org",
+  //       },
+  //     ],
+  // //mainnote: this.state.notes[0] ? this.state.notes[0].id : null,
+  //     input: "",
+  //     route: "signin",
+  //     isSignedIn: true,
+  //   };
+
+  loadUser = (data) => {
+    this.setState({
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        notes: data.notes,
+        joined: data.joined,
+      },
+    });
+  };
+
+  loadNotes = (data) => {
+    this.setState({
       notes: [
         {
-          id: 1,
-          name: "Leanne Graham",
-          username: "Bret",
-          description: "Sincere@april.biz",
-        },
-        {
-          id: 2,
-          name: "Ervin Howell",
-          username: "Antonette",
-          description: "Shanna@melissa.tv",
-        },
-        {
-          id: 3,
-          name: "Clementine Bauch",
-          username: "Samantha",
-          description: "Nathan@yesenia.net",
-        },
-        {
-          id: 4,
-          name: "Patricia Lebsack",
-          username: "Karianne",
-          description: "Julianne.OConner@kory.org",
+          id: data.id,
+          title: data.title,
+          content: data.content,
+          dateCreated: data.dateCreated,
+          email: data.email,
         },
       ],
-      // mainnote: this.state.notes[0],
-      input: "",
-      route: "signin",
-      isSignedIn: true,
-    };
-  }
+    });
+  };
+
+  onRouteChange = (route) => {
+    if (route === "signout") {
+      // If the route is going to signin, then you aren't signed in
+      this.setState(initialState);
+    } else if (route === "home") {
+      this.setState({ isSignedIn: true });
+    }
+    this.setState({ route: route });
+  };
+
   render() {
     return (
       <div className="App">
@@ -67,17 +126,20 @@ class App extends Component {
           isSignedIn={this.isSignedIn}
           onRouteChange={this.onRouteChange}
         />
-        {this.state.route === "signin" ? (
-          <Signin onRouteChange={this.onRouteChange} />
-        ) : (
+        {this.state.route === "home" ? (
           <div>
-            <Notes notes={this.state.notes} />
-            {/* <Mainnote/> */}
-            {/* <Register /> */}
-            {/* <Logo /> */}
+            <Notes loadNotes={this.loadNotes} notes={this.state.notes} />
           </div>
+        ) : this.state.route === "signin" ? (
+          <Signin loadNotes={this.loadNotes} loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register
+            loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange}
+          />
         )}
       </div>
+            
     );
   }
 }
